@@ -1,0 +1,66 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="220dp"
+    android:height="120dp"
+    android:viewportWidth="240"
+    android:viewportHeight="130">
+    <!-- Background Oval -->
+    <path
+        android:fillColor="#E2E8F0"
+        android:pathData="M6.25,65a113.75,45 0 1,0 227.5,0a113.75,45 0 1,0 -227.5,0z"
+        android:fillAlpha="0.6" />
+    <path
+        android:fillColor="#CBD5E1"
+        android:pathData="M69,117a52,5.6 0 1,0 104,0a52,5.6 0 1,0 -104,0z"
+        android:fillAlpha="0.4" />
+    
+    <!-- Wifi Circle on Left -->
+    <path
+        android:fillColor="#F1F5F9"
+        android:strokeColor="#CBD5E1"
+        android:strokeWidth="1.5"
+        android:pathData="M31.1,45.5a19.6,19.6 0 1,0 39.2,0a19.6,19.6 0 1,0 -39.2,0z" />
+    <path
+        android:strokeColor="#64748B"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:pathData="M42.2,42A12,12 0 0 1 59.2,42M45,44.8A8,8 0 0 1 56.4,44.8M47.9,47.7A4,4 0 0 1 53.5,47.7" />
+    <path
+        android:fillColor="#64748B"
+        android:pathData="M48.7,51a2,2 0 1,0 4,0a2,2 0 1,0 -4,0z" />
+
+    <!-- Center Smartphone Outline -->
+    <path
+        android:fillColor="#334155"
+        android:pathData="M94,10L135,10A8,8 0 0 1 143,18L143,107A8,8 0 0 1 135,115L94,115A8,8 0 0 1 86,107L86,18A8,8 0 0 1 94,10z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M95,16L134,16A3,3 0 0 1 137,19L137,103A3,3 0 0 1 134,106L95,106A3,3 0 0 1 92,103L92,19A3,3 0 0 1 95,16z" />
+    <!-- Speaker Bar -->
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M106,108L123,108A1.2,1.2 0 0 1 123,110.4L106,110.4A1.2,1.2 0 0 1 106,108z" />
+
+    <!-- Checklist rows on phone -->
+    <path android:fillColor="#F59E0B" android:pathData="M96.2,30a3.5,3.5 0 1,0 7,0a3.5,3.5 0 1,0 -7,0z" />
+    <path android:fillColor="#E2E8F0" android:pathData="M108,28h24a2,2 0 0 1 0,4h-24a2,2 0 0 1 0,-4z" />
+
+    <path android:fillColor="#10B981" android:pathData="M96.2,46a3.5,3.5 0 1,0 7,0a3.5,3.5 0 1,0 -7,0z" />
+    <path android:fillColor="#E2E8F0" android:pathData="M108,44h24a2,2 0 0 1 0,4h-24a2,2 0 0 1 0,-4z" />
+
+    <path android:fillColor="#3B82F6" android:pathData="M96.2,63a3.5,3.5 0 1,0 7,0a3.5,3.5 0 1,0 -7,0z" />
+    <path android:fillColor="#E2E8F0" android:pathData="M108,61h24a2,2 0 0 1 0,4h-24a2,2 0 0 1 0,-4z" />
+
+    <path android:fillColor="#8B5CF6" android:pathData="M96.2,80a3.5,3.5 0 1,0 7,0a3.5,3.5 0 1,0 -7,0z" />
+    <path android:fillColor="#E2E8F0" android:pathData="M108,78h24a2,2 0 0 1 0,4h-24a2,2 0 0 1 0,-4z" />
+
+    <!-- Gold Checkmark Badge on Right -->
+    <path
+        android:fillColor="#EAB308"
+        android:pathData="M160.5,80.5a17.5,17.5 0 1,0 35,0a17.5,17.5 0 1,0 -35,0z" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M171,80.8l5,5l8.5,-9.5" />
+</vector>

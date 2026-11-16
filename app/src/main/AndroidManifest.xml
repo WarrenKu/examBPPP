@@ -29,9 +29,9 @@
         android:supportsPictureInPicture="false"
         tools:targetApi="34">
 
-        <!-- Welcome & Pre-Flight Diagnostics Screen -->
+        <!-- 1. Splash Screen Activity (Launcher) -->
         <activity
-            android:name=".ui.welcome.WelcomeActivity"
+            android:name=".ui.splash.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AndroidExamBPPP.NoActionBar">
@@ -41,8 +41,19 @@
             </intent-filter>
         </activity>
 
+        <!-- 2. Version Check Activity -->
+        <activity
+            android:name=".ui.version.VersionCheckActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
-        <!-- Secure Lockdown WebView Activity -->
+        <!-- 3. Pre-Flight Diagnostics Screen -->
+        <activity
+            android:name=".ui.welcome.WelcomeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- 4. Secure Lockdown WebView Activity -->
         <activity
             android:name=".ui.webview.WebViewActivity"
             android:exported="false"
