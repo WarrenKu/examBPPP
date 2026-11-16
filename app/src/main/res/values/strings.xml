@@ -40,4 +40,6 @@
     <string name="btn_reload">Muat Ulang</string>
     <string name="btn_exit">Keluar</string>
     <string name="btn_cancel">Batal</string>
+    <string name="btn_resume_exam_caps">LANJUTKAN UJIAN</string>
+    <string name="btn_exit_caps">KELUAR</string>
 </resources>

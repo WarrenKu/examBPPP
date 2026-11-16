@@ -10,4 +10,27 @@
         <item name="android:windowBackground">#FFFFFF</item>
         <item name="android:fontFamily">@font/dm_sans</item>
     </style>
+
+    <!-- 1:1 Dark Material Dialog Theme matching Official ExamBPPP -->
+    <style name="Theme.ExamBPPP.DarkDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorSurface">#2E3238</item>
+        <item name="colorPrimary">#5DBEB8</item>
+        <item name="colorOnSurface">#FFFFFF</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#D0D4D6</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.ExamBPPP.Dialog</item>
+        <item name="buttonBarPositiveButtonStyle">@style/ExamBPPP.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/ExamBPPP.DialogButton</item>
+    </style>
+
+    <style name="ShapeAppearance.ExamBPPP.Dialog" parent="">
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ExamBPPP.DialogButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">#5DBEB8</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.BatteryManager
@@ -24,13 +25,19 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import id.go.zee.kemendikdasmen.exambppp.R
 import id.go.zee.kemendikdasmen.exambppp.bridge.AndroidBridge
 import id.go.zee.kemendikdasmen.exambppp.databinding.ActivityWebviewBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.InetSocketAddress
+import java.net.Socket
 import java.util.Locale
 
 /**
@@ -110,33 +117,82 @@ class WebViewActivity : AppCompatActivity(), AndroidBridge.BridgeListener {
         statusMonitorJob?.cancel()
     }
 
+    private var lastSlowWarningTime = 0L
+
+    private fun showInternetSlowWarning() {
+        val now = System.currentTimeMillis()
+        if (now - lastSlowWarningTime < 10000) return
+        lastSlowWarningTime = now
+
+        runOnUiThread {
+            val snackbar = Snackbar.make(
+                binding.coordinatorRoot,
+                getString(R.string.internet_slow),
+                Snackbar.LENGTH_LONG
+            )
+            snackbar.anchorView = binding.examStatusBar.root
+            snackbar.setBackgroundTint(Color.parseColor("#1E2022"))
+            snackbar.setTextColor(Color.WHITE)
+            snackbar.show()
+        }
+    }
+
     private fun startStatusMonitor() {
         statusMonitorJob?.cancel()
         statusMonitorJob = lifecycleScope.launch {
             while (isActive) {
                 updateNetworkStatus()
                 updateRamStatus()
-                delay(2500)
+                delay(3000)
             }
         }
     }
 
-    private fun updateNetworkStatus() {
+    private suspend fun updateNetworkStatus() {
         try {
             val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val activeNetwork = cm.activeNetwork
             val caps = cm.getNetworkCapabilities(activeNetwork)
 
-            if (caps == null) {
-                binding.examStatusBar.tvNetworkIcon.text = "⚠️"
-                binding.examStatusBar.tvNetworkValue.text = "Terputus"
-            } else {
+            if (caps == null || !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+                withContext(Dispatchers.Main) {
+                    binding.examStatusBar.tvNetworkIcon.text = "⚠️"
+                    binding.examStatusBar.tvNetworkValue.text = "Terputus"
+                }
+                return
+            }
+
+            val latency = measureLatency()
+            withContext(Dispatchers.Main) {
+                if (latency in 1..499) {
+                    binding.examStatusBar.tvNetworkIcon.text = "📶"
+                    binding.examStatusBar.tvNetworkValue.text = "Internet Cepat"
+                } else if (latency >= 500) {
+                    binding.examStatusBar.tvNetworkIcon.text = "📶"
+                    binding.examStatusBar.tvNetworkValue.text = "Koneksi lambat (${latency} ms)"
+                    showInternetSlowWarning()
+                } else {
+                    binding.examStatusBar.tvNetworkIcon.text = "📶"
+                    binding.examStatusBar.tvNetworkValue.text = "Internet Cepat"
+                }
+            }
+        } catch (_: Exception) {
+            withContext(Dispatchers.Main) {
                 binding.examStatusBar.tvNetworkIcon.text = "📶"
                 binding.examStatusBar.tvNetworkValue.text = "Internet Cepat"
             }
-        } catch (e: Exception) {
-            binding.examStatusBar.tvNetworkIcon.text = "📶"
-            binding.examStatusBar.tvNetworkValue.text = "Internet Cepat"
+        }
+    }
+
+    private suspend fun measureLatency(): Long = withContext(Dispatchers.IO) {
+        val start = System.currentTimeMillis()
+        try {
+            val socket = Socket()
+            socket.connect(InetSocketAddress("delivery-mobile.bppp.kemendikdasmen.go.id", 443), 1500)
+            socket.close()
+            System.currentTimeMillis() - start
+        } catch (_: Exception) {
+            -1L
         }
     }
 
@@ -248,13 +304,8 @@ class WebViewActivity : AppCompatActivity(), AndroidBridge.BridgeListener {
     }
 
     override fun onBackPressed() {
-        if (isExamActive) {
-            onRequestNativeExit()
-        } else if (binding.webView.canGoBack()) {
-            binding.webView.goBack()
-        } else {
-            super.onBackPressed()
-        }
+        // 1:1 Official Behavior: Pressing Back at ANY time triggers exit confirmation dialog
+        onRequestNativeExit()
     }
 
     // AndroidBridge.BridgeListener Callbacks
@@ -293,10 +344,13 @@ class WebViewActivity : AppCompatActivity(), AndroidBridge.BridgeListener {
 
     override fun onRequestNativeExit() {
         runOnUiThread {
-            AlertDialog.Builder(this)
+            MaterialAlertDialogBuilder(this, R.style.Theme_ExamBPPP_DarkDialog)
                 .setTitle(R.string.exit_confirmation_title)
                 .setMessage(R.string.exit_confirmation_msg)
-                .setPositiveButton("Ya, Keluar") { _, _ ->
+                .setNegativeButton(R.string.btn_resume_exam_caps) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton(R.string.btn_exit_caps) { _, _ ->
                     // Clear all session traces
                     binding.webView.clearCache(true)
                     binding.webView.clearFormData()
@@ -304,7 +358,7 @@ class WebViewActivity : AppCompatActivity(), AndroidBridge.BridgeListener {
                     binding.webView.loadUrl("about:blank")
                     finish()
                 }
-                .setNegativeButton("Lanjutkan Ujian", null)
+                .setCancelable(false)
                 .show()
         }
     }
