@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">ExamBPPP</string>
+    <string name="app_title">ExamBPPP Mobile</string>
+    <string name="app_subtitle">Balai Pengelolaan Pengujian Pendidikan — Kemendikdasmen</string>
+    <string name="bppp_version">2026 BPPP. Versi 9.0.0</string>
+
+    <!-- Diagnostics Strings -->
+    <string name="diag_intro_title">Pemeriksaan Integritas Sistem &amp; Perangkat</string>
+    <string name="diag_intro_desc">Biar tes lancar sampai selesai. Cuma beberapa detik untuk memeriksa kamera, jaringan, dan keamanan sistem.</string>
+    
+    <string name="check_label_root">Integritas Perangkat</string>
+    <string name="check_desc_root">Perangkat tidak boleh di-root atau emulator, dan layar harus terlindungi dari tangkapan layar.</string>
+    <string name="check_root_fail">Perangkat Anda terdeteksi menggunakan akses root atau berjalan di emulator. Ujian tidak dapat dimulai demi menjaga integritas.</string>
+    
+    <string name="check_label_camera">Kamera &amp; Identitas Peserta</string>
+    <string name="check_desc_camera">Kamera diperlukan untuk verifikasi identitas peserta ujian. Ujian tidak dapat dimulai tanpa izin kamera.</string>
+    <string name="check_camera_front_pass">Kamera depan siap digunakan.</string>
+    <string name="check_camera_fail">Kamera tidak bisa dipakai atau izin belum diberikan.</string>
+    
+    <string name="check_label_voip">Panggilan Aktif &amp; VoIP</string>
+    <string name="check_desc_voip">Harap akhiri semua panggilan aktif sebelum memulai ujian.</string>
+    <string name="check_voip_fail">Panggilan VoIP sedang aktif. Matikan sebelum melanjutkan.</string>
+
+    <string name="check_label_internet">Koneksi Server Ujian</string>
+    <string name="check_desc_internet">Koneksi internet harus memadai untuk memuat soal ujian.</string>
+    <string name="internet_fast">Internet Cepat</string>
+    <string name="internet_slow">Koneksi internet Anda melambat. Harap perhatikan waktu ujian.</string>
+    <string name="error_no_internet">Tidak ada koneksi internet. Pastikan perangkat Anda terhubung ke internet dan coba lagi.</string>
+
+    <!-- Lockdown Warnings -->
+    <string name="split_screen_blocked_title">Mode Layar Terbagi Tidak Diizinkan</string>
+    <string name="split_screen_blocked_msg">Ujian tidak dapat dikerjakan dalam mode layar terbagi atau jendela mengambang. Kembalikan aplikasi ke layar penuh untuk melanjutkan ujian.</string>
+    <string name="exit_warning_msg">Anda keluar dari aplikasi ujian. Demi menjaga integritas ujian, Anda akan dikembalikan ke halaman awal.</string>
+    <string name="exit_confirmation_title">Keluar dari Ujian?</string>
+    <string name="exit_confirmation_msg">Apakah Anda yakin ingin keluar? Pastikan Anda sudah menyelesaikan ujian terlebih dahulu.</string>
+    <string name="insecure_connection_detected">Koneksi tidak aman terdeteksi. Ujian tidak dapat dilanjutkan. Harap hubungi pengawas.</string>
+
+    <!-- Actions -->
+    <string name="btn_continue">Lanjutkan ke Ujian</string>
+    <string name="btn_exit">Keluar</string>
+    <string name="btn_cancel">Batal</string>
+</resources>

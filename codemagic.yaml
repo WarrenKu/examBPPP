@@ -1,0 +1,23 @@
+workflows:
+  android-exambppp:
+    name: Build ExamBPPP APK
+    max_build_duration: 30
+    instance_type: linux_x2
+    environment:
+      java: 17
+      android_sdk: 34
+    scripts:
+      - name: Set permissions
+        script: |
+          chmod +x gradlew || true
+      - name: Build Debug APK
+        script: |
+          ./gradlew assembleDebug --stacktrace
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
+    publishing:
+      email:
+        recipients: []
+        notify:
+          failure: false
+          success: true

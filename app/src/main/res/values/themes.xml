@@ -1,0 +1,11 @@
+<resources>
+    <style name="Theme.AndroidExamBPPP.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/bppp_blue_primary</item>
+        <item name="colorPrimaryVariant">@color/bppp_blue_dark</item>
+        <item name="colorOnPrimary">@color/surface_white</item>
+        <item name="colorSecondary">@color/bppp_accent</item>
+        <item name="android:statusBarColor">@color/bppp_blue_dark</item>
+        <item name="android:navigationBarColor">@color/bppp_blue_dark</item>
+        <item name="android:windowBackground">@color/bg_light</item>
+    </style>
+</resources>
