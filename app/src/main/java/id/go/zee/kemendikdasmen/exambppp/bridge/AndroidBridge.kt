@@ -1,10 +1,10 @@
-package id.go.kemendikdasmen.exambppp.bridge
+package id.go.zee.kemendikdasmen.exambppp.bridge
 
 import android.webkit.JavascriptInterface
 import java.util.regex.Pattern
 
 /**
- * Reverse-Engineered from id.go.kemendikdasmen.exambppp.bridge.AndroidBridgeImpl
+ * Reverse-Engineered from id.go.zee.kemendikdasmen.exambppp.bridge.AndroidBridgeImpl
  * Official JavaScript Interface for ExamBPPP
  */
 class AndroidBridge(

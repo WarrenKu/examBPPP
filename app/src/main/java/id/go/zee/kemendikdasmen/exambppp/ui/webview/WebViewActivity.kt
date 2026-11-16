@@ -1,4 +1,4 @@
-package id.go.kemendikdasmen.exambppp.ui.webview
+package id.go.zee.kemendikdasmen.exambppp.ui.webview
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -14,14 +14,14 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import id.go.kemendikdasmen.exambppp.R
-import id.go.kemendikdasmen.exambppp.bridge.AndroidBridge
-import id.go.kemendikdasmen.exambppp.databinding.ActivityWebviewBinding
-import id.go.kemendikdasmen.exambppp.security.SecurityDetector
+import id.go.zee.kemendikdasmen.exambppp.R
+import id.go.zee.kemendikdasmen.exambppp.bridge.AndroidBridge
+import id.go.zee.kemendikdasmen.exambppp.databinding.ActivityWebviewBinding
+import id.go.zee.kemendikdasmen.exambppp.security.SecurityDetector
 
 /**
  * Hardened Exam Lockdown Container
- * Reverse-Engineered from id.go.kemendikdasmen.exambppp.ui.webview.WebViewActivity
+ * Reverse-Engineered from id.go.zee.kemendikdasmen.exambppp.ui.webview.WebViewActivity
  */
 class WebViewActivity : AppCompatActivity(), AndroidBridge.BridgeListener {
 

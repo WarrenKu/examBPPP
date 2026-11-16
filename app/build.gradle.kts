@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "id.go.kemendikdasmen.exambppp"
+    namespace = "id.go.zee.kemendikdasmen.exambppp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "id.go.kemendikdasmen.exambppp"
+        applicationId = "id.go.zee.kemendikdasmen.exambppp"
         minSdk = 24
         targetSdk = 34
         versionCode = 16

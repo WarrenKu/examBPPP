@@ -1,4 +1,4 @@
-package id.go.kemendikdasmen.exambppp.ui.welcome
+package id.go.zee.kemendikdasmen.exambppp.ui.welcome
 
 import android.Manifest
 import android.content.Intent
@@ -13,11 +13,13 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import id.go.kemendikdasmen.exambppp.R
-import id.go.kemendikdasmen.exambppp.databinding.ActivityWelcomeBinding
-import id.go.kemendikdasmen.exambppp.security.SecurityDetector
-import id.go.kemendikdasmen.exambppp.ui.webview.WebViewActivity
+import id.go.zee.kemendikdasmen.exambppp.R
+import id.go.zee.kemendikdasmen.exambppp.databinding.ActivityWelcomeBinding
+import id.go.zee.kemendikdasmen.exambppp.security.SecurityDetector
+import id.go.zee.kemendikdasmen.exambppp.ui.webview.WebViewActivity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -49,12 +51,51 @@ class WelcomeActivity : AppCompatActivity() {
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        startSubtitleAnimation()
         runDiagnostics()
 
         binding.btnContinue.setOnClickListener {
             val intent = Intent(this, WebViewActivity::class.java)
             startActivity(intent)
             finish()
+        }
+    }
+
+    private fun startSubtitleAnimation() {
+        val texts = listOf("SAFE EXAM BROWSER", "EXAM BY @NEKOVELUX")
+        var currentIndex = 0
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            binding.tvAnimatedSubtitle.text = texts[currentIndex]
+
+            while (isActive) {
+                // 1. Tahan tampilan selama 2 detik
+                delay(2000)
+
+                val currentText = texts[currentIndex]
+                val nextIndex = (currentIndex + 1) % texts.size
+                val nextText = texts[nextIndex]
+
+                // 2. Animasi erase dari kanan ke kiri durasi 0.5 detik (500 ms)
+                val eraseSteps = currentText.length
+                val stepDelay = 500L / eraseSteps.coerceAtLeast(1)
+
+                for (i in eraseSteps downTo 0) {
+                    binding.tvAnimatedSubtitle.text = currentText.substring(0, i)
+                    delay(stepDelay)
+                }
+
+                // 3. Masukkan teks baru
+                val typeSteps = nextText.length
+                val typeStepDelay = 350L / typeSteps.coerceAtLeast(1)
+
+                for (i in 1..typeSteps) {
+                    binding.tvAnimatedSubtitle.text = nextText.substring(0, i)
+                    delay(typeStepDelay)
+                }
+
+                currentIndex = nextIndex
+            }
         }
     }
 

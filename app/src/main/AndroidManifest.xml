@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="id.go.kemendikdasmen.exambppp">
+    package="id.go.zee.kemendikdasmen.exambppp">
 
     <!-- Permissions Reverse-Engineered from Official ExamBPPP 9.0.0 -->
     <uses-permission android:name="android.permission.INTERNET" />
