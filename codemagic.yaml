@@ -13,4 +13,4 @@ workflows:
         script: |
           ./gradlew assembleDebug --stacktrace
     artifacts:
-      - app/build/outputs/apk/debug/*.apk
+      - app/build/outputs/apk/**/*.apk
