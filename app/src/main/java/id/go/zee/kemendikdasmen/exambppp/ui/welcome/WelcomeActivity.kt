@@ -3,9 +3,16 @@ package id.go.zee.kemendikdasmen.exambppp.ui.welcome
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.view.View
+import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -40,15 +47,24 @@ class WelcomeActivity : AppCompatActivity() {
         if (isGranted) {
             startCameraPreview()
         } else {
+            TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition().setDuration(200))
             binding.pbCamera.visibility = View.GONE
             binding.pillCamera.visibility = View.VISIBLE
-            binding.tvStatusCamera.text = "Izin kamera diperlukan"
+            crossfadeText(binding.tvStatusCamera, "Izin kamera diperlukan")
             isCameraReady = false
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 1:1 Normal White Status Bar with Dark Icons matching official app
+        window.statusBarColor = Color.WHITE
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
+
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -67,12 +83,11 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     /**
-     * Animasi teks subtitle header:
-     * "SAFE EXAM BROWSER" (delay 2 detik)
-     * Animasi erase dari kanan ke kiri (0.5 detik)
-     * "EXAM BY @NEKOLUX" (delay 2 detik)
-     * Animasi erase dari kanan ke kiri (0.5 detik)
-     * Loop berulang terus menerus
+     * Animasi transisi halus (fluid slide & crossfade) subtitle header:
+     * Menampilkan "SAFE EXAM BROWSER" (delay ~2.4 detik)
+     * Fade out & slide up halus (240ms) -> ganti teks -> Fade in & slide normal (280ms)
+     * Menampilkan "EXAM BY @NEKOLUX" (delay ~2.4 detik)
+     * Loop berulang secara seamless tanpa kaku
      */
     private fun startSubtitleAnimation() {
         val texts = listOf("SAFE EXAM BROWSER", "EXAM BY @NEKOLUX")
@@ -82,33 +97,49 @@ class WelcomeActivity : AppCompatActivity() {
             binding.tvAnimatedSubtitle.text = texts[currentIndex]
 
             while (isActive) {
-                delay(2000)
+                delay(2400)
 
-                val currentText = texts[currentIndex]
                 val nextIndex = (currentIndex + 1) % texts.size
                 val nextText = texts[nextIndex]
 
-                val eraseSteps = currentText.length
-                val stepDelay = 500L / eraseSteps.coerceAtLeast(1)
-
-                // Erase huruf dari kanan ke kiri
-                for (i in eraseSteps downTo 0) {
-                    binding.tvAnimatedSubtitle.text = currentText.substring(0, i)
-                    delay(stepDelay)
-                }
-
-                // Munculkan teks baru
-                val typeSteps = nextText.length
-                val typeStepDelay = 350L / typeSteps.coerceAtLeast(1)
-
-                for (i in 1..typeSteps) {
-                    binding.tvAnimatedSubtitle.text = nextText.substring(0, i)
-                    delay(typeStepDelay)
-                }
+                // Animasi transisi keluar (Fade-out + slide up halus)
+                binding.tvAnimatedSubtitle.animate()
+                    .alpha(0f)
+                    .translationY(-10f)
+                    .setDuration(240)
+                    .setInterpolator(AccelerateInterpolator())
+                    .withEndAction {
+                        binding.tvAnimatedSubtitle.text = nextText
+                        binding.tvAnimatedSubtitle.translationY = 10f
+                        // Animasi transisi masuk (Fade-in + slide to center)
+                        binding.tvAnimatedSubtitle.animate()
+                            .alpha(1f)
+                            .translationY(0f)
+                            .setDuration(280)
+                            .setInterpolator(DecelerateInterpolator())
+                            .start()
+                    }
+                    .start()
 
                 currentIndex = nextIndex
+                delay(550)
             }
         }
+    }
+
+    private fun crossfadeText(textView: TextView, newText: String) {
+        if (textView.text == newText) return
+        textView.animate()
+            .alpha(0.2f)
+            .setDuration(150)
+            .withEndAction {
+                textView.text = newText
+                textView.animate()
+                    .alpha(1f)
+                    .setDuration(200)
+                    .start()
+            }
+            .start()
     }
 
     private fun runDiagnostics() {
@@ -119,10 +150,12 @@ class WelcomeActivity : AppCompatActivity() {
         isSecurityReady = false
         isPhoneReady = false
 
+        TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition().setDuration(200))
+
         binding.progressSummary.visibility = View.VISIBLE
         binding.ivStatusSummaryIcon.visibility = View.GONE
-        binding.tvStatusTitle.text = "Memeriksa perangkat…"
-        binding.tvStatusSubtitle.text = "Tunggu sebentar ya."
+        crossfadeText(binding.tvStatusTitle, "Memeriksa perangkat…")
+        crossfadeText(binding.tvStatusSubtitle, "Tunggu sebentar ya.")
 
         binding.pbCamera.visibility = View.VISIBLE
         binding.pillCamera.visibility = View.GONE
@@ -146,28 +179,30 @@ class WelcomeActivity : AppCompatActivity() {
 
         binding.btnContinue.isEnabled = false
 
-        // Jalankan pemeriksaan bertahap
+        // Jalankan pemeriksaan bertahap dengan transisi halus
         lifecycleScope.launch(Dispatchers.Main) {
             delay(350)
 
             // 1. Versi Sistem
             val release = Build.VERSION.RELEASE ?: "12"
+            TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition().setDuration(220))
             binding.pbSystem.visibility = View.GONE
             binding.pillSystem.visibility = View.VISIBLE
-            binding.tvStatusSystem.text = "Android $release, sudah memenuhi (min. Android 7)"
+            crossfadeText(binding.tvStatusSystem, "Android $release, sudah memenuhi (min. Android 7)")
             isSystemReady = true
 
             delay(300)
 
             // 2. Keamanan Perangkat (Root & Emulator)
             val isRooted = SecurityDetector.isDeviceRooted() || SecurityDetector.isEmulator()
+            TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition().setDuration(220))
             binding.pbSecurity.visibility = View.GONE
             binding.pillSecurity.visibility = View.VISIBLE
             if (isRooted) {
-                binding.tvStatusSecurity.text = "Perangkat belum aman"
+                crossfadeText(binding.tvStatusSecurity, "Perangkat belum aman")
                 isSecurityReady = false
             } else {
-                binding.tvStatusSecurity.text = "Aman untuk tes"
+                crossfadeText(binding.tvStatusSecurity, "Aman untuk tes")
                 isSecurityReady = true
             }
 
@@ -175,13 +210,14 @@ class WelcomeActivity : AppCompatActivity() {
 
             // 3. Telepon & VoIP
             val isVoip = SecurityDetector.isVoipCallActive(this@WelcomeActivity)
+            TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition().setDuration(220))
             binding.pbPhone.visibility = View.GONE
             binding.pillPhone.visibility = View.VISIBLE
             if (isVoip) {
-                binding.tvStatusPhone.text = "Panggilan aktif terdeteksi"
+                crossfadeText(binding.tvStatusPhone, "Panggilan aktif terdeteksi")
                 isPhoneReady = false
             } else {
-                binding.tvStatusPhone.text = "Tidak ada panggilan aktif"
+                crossfadeText(binding.tvStatusPhone, "Tidak ada panggilan aktif")
                 isPhoneReady = true
             }
 
@@ -217,15 +253,17 @@ class WelcomeActivity : AppCompatActivity() {
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(this, cameraSelector, preview)
 
+                TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition().setDuration(220))
                 binding.pbCamera.visibility = View.GONE
                 binding.pillCamera.visibility = View.VISIBLE
-                binding.tvStatusCamera.text = "Kamera siap digunakan"
+                crossfadeText(binding.tvStatusCamera, "Kamera siap digunakan")
                 isCameraReady = true
                 validateAllChecks()
             } catch (e: Exception) {
+                TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition().setDuration(220))
                 binding.pbCamera.visibility = View.GONE
                 binding.pillCamera.visibility = View.VISIBLE
-                binding.tvStatusCamera.text = "Kamera siap digunakan"
+                crossfadeText(binding.tvStatusCamera, "Kamera siap digunakan")
                 isCameraReady = true
                 validateAllChecks()
             }
@@ -251,9 +289,10 @@ class WelcomeActivity : AppCompatActivity() {
             }
 
             withContext(Dispatchers.Main) {
+                TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition().setDuration(220))
                 binding.pbInternet.visibility = View.GONE
                 binding.pillInternet.visibility = View.VISIBLE
-                binding.tvStatusInternet.text = "Koneksi stabil"
+                crossfadeText(binding.tvStatusInternet, "Koneksi stabil")
                 isNetworkReady = true
                 validateAllChecks()
             }
@@ -262,10 +301,11 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun validateAllChecks() {
         if (isCameraReady && isNetworkReady && isSystemReady && isSecurityReady && isPhoneReady) {
+            TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition().setDuration(250))
             binding.progressSummary.visibility = View.GONE
             binding.ivStatusSummaryIcon.visibility = View.VISIBLE
-            binding.tvStatusTitle.text = "Perangkat siap"
-            binding.tvStatusSubtitle.text = "Semua aman. Kamu bisa lanjut ke tes."
+            crossfadeText(binding.tvStatusTitle, "Perangkat siap")
+            crossfadeText(binding.tvStatusSubtitle, "Semua aman. Kamu bisa lanjut ke tes.")
 
             binding.btnContinue.isEnabled = true
         }
