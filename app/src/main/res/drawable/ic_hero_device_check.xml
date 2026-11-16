@@ -60,7 +60,7 @@
     </path>
     <path
         android:fillColor="#FFCFDAD7"
-        android:pathData="M108,24.6h24a2,2 0 0 1 0,4h-24a2,2 0 0 1 0,-4zM108,40.7h24a2,2 0 0 1 0,4h-24a2,2 0 0 1 0,-4zM108,57.5h24a2,2 0 0 1 0,4h-24a2,2 0 0 1 0,-4zM108,75h24a2,2 0 0 1 0,4h-24a2,2 0 0 1 0,-">
+        android:pathData="M108,24.6h24a2,2 0 0 1 0,4h-24a2,2 0 0 1 0,-4zM108,40.7h24a2,2 0 0 1 0,4h-24a2,2 0 0 1 0,-4zM108,57.5h24a2,2 0 0 1 0,4h-24a2,2 0 0 1 0,-4zM108,75h24a2,2 0 0 1 0,4h-24a2,2 0 0 1 0,-4z">
     </path>
     <path
         android:fillColor="#FFD9AE4B"
