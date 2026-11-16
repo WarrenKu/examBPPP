@@ -26,7 +26,20 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build Debug APK with Gradle
-      run: ./gradlew assembleDebug --stacktrace --no-daemon
+      run: |
+        ./gradlew assembleDebug --stacktrace --no-daemon || {
+          echo "==== GRADLE BUILD FAILED. CAPTURING DETAILED LOG ===="
+          ./gradlew assembleDebug --info --no-daemon > gradle_error.txt 2>&1 || true
+          tail -n 80 gradle_error.txt
+          exit 1
+        }
+
+    - name: Upload Error Log on Failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: gradle-error-log
+        path: gradle_error.txt
 
     - name: Upload APK Artifact
       if: always()

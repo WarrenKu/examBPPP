@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="0">
-    <solid
-        android:color="@0x7f050046">
-    </solid>
-    <corners
-        android:radius="20dp">
-    </corners>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/dc_pill_pass_bg" />
+    <corners android:radius="20dp" />
 </shape>
