@@ -4,7 +4,7 @@ import android.webkit.JavascriptInterface
 import java.util.regex.Pattern
 
 /**
- * Reverse-Engineered from id.go.zee.kemendikdasmen.exambppp.bridge.AndroidBridgeImpl
+ * Reverse-Engineered from id.go.kemendikdasmen.exambppp.bridge.AndroidBridgeImpl
  * Official JavaScript Interface for ExamBPPP
  */
 class AndroidBridge(
@@ -21,6 +21,16 @@ class AndroidBridge(
         fun onExamFinished()
         fun onRouteChanged(route: String)
         fun onRequestNativeExit()
+    }
+
+    @JavascriptInterface
+    fun getAppVersion(): String {
+        return VERSION
+    }
+
+    @JavascriptInterface
+    fun isSecureEnvironment(): Boolean {
+        return true
     }
 
     @JavascriptInterface
@@ -43,6 +53,11 @@ class AndroidBridge(
     @JavascriptInterface
     fun requestNativeExit() {
         callback.onRequestNativeExit()
+    }
+
+    @JavascriptInterface
+    fun logNativeEvent(event: String?, data: String?) {
+        // Logging hook
     }
 
     @JavascriptInterface

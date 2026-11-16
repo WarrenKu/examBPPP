@@ -21,6 +21,11 @@
     <color name="white">#FFFFFF</color>
     <color name="text_hint">#8FA3A0</color>
 
+    <!-- Status Bar Colors from Official ExamBPPP -->
+    <color name="status_bar_bg">#E6134E5C</color>
+    <color name="status_bar_divider">#4DFFFFFF</color>
+    <color name="status_bar_text">#FFFFFFFF</color>
+
     <!-- Legacy / WebView Colors -->
     <color name="bppp_blue_dark">#002855</color>
     <color name="bppp_blue_primary">#003366</color>

@@ -1,7 +1,15 @@
 package id.go.zee.kemendikdasmen.exambppp.ui.webview
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.AlertDialog
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -9,24 +17,47 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import id.go.zee.kemendikdasmen.exambppp.R
 import id.go.zee.kemendikdasmen.exambppp.bridge.AndroidBridge
 import id.go.zee.kemendikdasmen.exambppp.databinding.ActivityWebviewBinding
-import id.go.zee.kemendikdasmen.exambppp.security.SecurityDetector
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import java.util.Locale
 
 /**
  * Hardened Exam Lockdown Container
- * Reverse-Engineered from id.go.zee.kemendikdasmen.exambppp.ui.webview.WebViewActivity
+ * Reverse-Engineered from id.go.kemendikdasmen.exambppp.ui.webview.WebViewActivity
  */
 class WebViewActivity : AppCompatActivity(), AndroidBridge.BridgeListener {
 
     private lateinit var binding: ActivityWebviewBinding
     private var isExamActive = false
+    private var statusMonitorJob: Job? = null
+
+    private val batteryReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == Intent.ACTION_BATTERY_CHANGED) {
+                val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+                val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+                val status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
+                val isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                        status == BatteryManager.BATTERY_STATUS_FULL
+
+                val pct = if (scale > 0 && level >= 0) (level * 100) / scale else 0
+                binding.examStatusBar.tvBatteryIcon.text = if (isCharging) "⚡" else "🔋"
+                binding.examStatusBar.tvBatteryValue.text = "$pct%"
+            }
+        }
+    }
 
     companion object {
         const val TARGET_URL = "https://delivery-mobile.bppp.kemendikdasmen.go.id"
@@ -55,8 +86,79 @@ class WebViewActivity : AppCompatActivity(), AndroidBridge.BridgeListener {
         // 4. Configure Hardened WebView
         setupHardenedWebView()
 
-        // 5. Load Initial Delivery Endpoint
+        // 5. Setup Error Action Listener
+        binding.nativeErrorContainer.btnErrorAction.setOnClickListener {
+            binding.nativeErrorContainer.root.visibility = View.GONE
+            binding.webView.reload()
+        }
+
+        // 6. Load Initial Delivery Endpoint
         binding.webView.loadUrl(TARGET_URL)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        startStatusMonitor()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        try {
+            unregisterReceiver(batteryReceiver)
+        } catch (_: Exception) {}
+        statusMonitorJob?.cancel()
+    }
+
+    private fun startStatusMonitor() {
+        statusMonitorJob?.cancel()
+        statusMonitorJob = lifecycleScope.launch {
+            while (isActive) {
+                updateNetworkStatus()
+                updateRamStatus()
+                delay(2500)
+            }
+        }
+    }
+
+    private fun updateNetworkStatus() {
+        try {
+            val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val activeNetwork = cm.activeNetwork
+            val caps = cm.getNetworkCapabilities(activeNetwork)
+
+            if (caps == null) {
+                binding.examStatusBar.tvNetworkIcon.text = "⚠️"
+                binding.examStatusBar.tvNetworkValue.text = "Terputus"
+            } else {
+                binding.examStatusBar.tvNetworkIcon.text = "📶"
+                binding.examStatusBar.tvNetworkValue.text = when {
+                    caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> "Wi-Fi"
+                    caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> "Seluler"
+                    else -> "Stabil"
+                }
+            }
+        } catch (e: Exception) {
+            binding.examStatusBar.tvNetworkIcon.text = "📶"
+            binding.examStatusBar.tvNetworkValue.text = "Stabil"
+        }
+    }
+
+    private fun updateRamStatus() {
+        try {
+            val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            val memInfo = ActivityManager.MemoryInfo()
+            am.getMemoryInfo(memInfo)
+
+            val totalGb = memInfo.totalMem.toDouble() / (1024 * 1024 * 1024)
+            val usedGb = (memInfo.totalMem - memInfo.availMem).toDouble() / (1024 * 1024 * 1024)
+
+            binding.examStatusBar.tvRamIcon.text = "💾"
+            binding.examStatusBar.tvRamValue.text = String.format(Locale.US, "%.1f/%.1f GB", usedGb, totalGb)
+        } catch (e: Exception) {
+            binding.examStatusBar.tvRamIcon.text = "💾"
+            binding.examStatusBar.tvRamValue.text = "—"
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -98,15 +200,14 @@ class WebViewActivity : AppCompatActivity(), AndroidBridge.BridgeListener {
                 }
             }
 
-            override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
-                super.onReceivedError(view, errorCode, description, failingUrl)
-                binding.nativeErrorContainer.visibility = View.VISIBLE
+            override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
+                super.onReceivedError(view, request, error)
+                if (request?.isForMainFrame == true) {
+                    binding.nativeErrorContainer.root.visibility = View.VISIBLE
+                    binding.nativeErrorContainer.errorMessage.text = error?.description ?: getString(R.string.error_no_internet)
+                    binding.nativeErrorContainer.btnErrorAction.visibility = View.VISIBLE
+                }
             }
-        }
-
-        binding.btnRetryConnection.setOnClickListener {
-            binding.nativeErrorContainer.visibility = View.GONE
-            binding.webView.reload()
         }
     }
 
@@ -166,7 +267,6 @@ class WebViewActivity : AppCompatActivity(), AndroidBridge.BridgeListener {
         isExamActive = true
         runOnUiThread {
             Toast.makeText(this, "Sesi Ujian BPPP Dimulai (Lockdown Aktif)", Toast.LENGTH_SHORT).show()
-            // Dispatch to webpage ExamCallback
             binding.webView.evaluateJavascript(
                 "if(window.ExamCallback && typeof window.ExamCallback.notifyExamStarted === 'function'){ window.ExamCallback.notifyExamStarted(); }",
                 null

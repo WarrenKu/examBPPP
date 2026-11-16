@@ -37,6 +37,7 @@
 
     <!-- Actions -->
     <string name="btn_continue">Lanjutkan ke Ujian</string>
+    <string name="btn_reload">Muat Ulang</string>
     <string name="btn_exit">Keluar</string>
     <string name="btn_cancel">Batal</string>
 </resources>
