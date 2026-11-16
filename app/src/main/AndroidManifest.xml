@@ -41,11 +41,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Version Check Activity -->
-        <activity
-            android:name=".ui.version.VersionCheckActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
 
         <!-- Secure Lockdown WebView Activity -->
         <activity

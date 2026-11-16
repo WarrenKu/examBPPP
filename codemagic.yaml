@@ -8,9 +8,9 @@ workflows:
     scripts:
       - name: Set permissions
         script: |
-          chmod +x gradlew || true
+          chmod +x gradlew
       - name: Build Debug APK
         script: |
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug --stacktrace --no-daemon
     artifacts:
       - app/build/outputs/apk/**/*.apk
