@@ -6,6 +6,9 @@ workflows:
     environment:
       java: 17
     scripts:
+      - name: Set Android SDK location
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
       - name: Set permissions
         script: |
           chmod +x gradlew
