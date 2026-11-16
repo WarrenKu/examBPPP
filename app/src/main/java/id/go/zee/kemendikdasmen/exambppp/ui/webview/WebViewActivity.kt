@@ -132,15 +132,11 @@ class WebViewActivity : AppCompatActivity(), AndroidBridge.BridgeListener {
                 binding.examStatusBar.tvNetworkValue.text = "Terputus"
             } else {
                 binding.examStatusBar.tvNetworkIcon.text = "📶"
-                binding.examStatusBar.tvNetworkValue.text = when {
-                    caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> "Wi-Fi"
-                    caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> "Seluler"
-                    else -> "Stabil"
-                }
+                binding.examStatusBar.tvNetworkValue.text = "Internet Cepat"
             }
         } catch (e: Exception) {
             binding.examStatusBar.tvNetworkIcon.text = "📶"
-            binding.examStatusBar.tvNetworkValue.text = "Stabil"
+            binding.examStatusBar.tvNetworkValue.text = "Internet Cepat"
         }
     }
 
@@ -150,11 +146,10 @@ class WebViewActivity : AppCompatActivity(), AndroidBridge.BridgeListener {
             val memInfo = ActivityManager.MemoryInfo()
             am.getMemoryInfo(memInfo)
 
-            val totalGb = memInfo.totalMem.toDouble() / (1024 * 1024 * 1024)
-            val usedGb = (memInfo.totalMem - memInfo.availMem).toDouble() / (1024 * 1024 * 1024)
+            val percent = (((memInfo.totalMem - memInfo.availMem) * 100) / memInfo.totalMem).toInt()
 
             binding.examStatusBar.tvRamIcon.text = "💾"
-            binding.examStatusBar.tvRamValue.text = String.format(Locale.US, "%.1f/%.1f GB", usedGb, totalGb)
+            binding.examStatusBar.tvRamValue.text = "$percent% RAM digunakan"
         } catch (e: Exception) {
             binding.examStatusBar.tvRamIcon.text = "💾"
             binding.examStatusBar.tvRamValue.text = "—"

@@ -70,12 +70,12 @@ class WelcomeActivity : AppCompatActivity() {
      * Animasi teks subtitle header:
      * "SAFE EXAM BROWSER" (delay 2 detik)
      * Animasi erase dari kanan ke kiri (0.5 detik)
-     * "EXAM BY @NEKOVELUX" (delay 2 detik)
+     * "EXAM BY @NEKOLUX" (delay 2 detik)
      * Animasi erase dari kanan ke kiri (0.5 detik)
      * Loop berulang terus menerus
      */
     private fun startSubtitleAnimation() {
-        val texts = listOf("SAFE EXAM BROWSER", "EXAM BY @NEKOVELUX")
+        val texts = listOf("SAFE EXAM BROWSER", "EXAM BY @NEKOLUX")
         var currentIndex = 0
 
         lifecycleScope.launch(Dispatchers.Main) {
