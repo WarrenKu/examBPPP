@@ -4,9 +4,10 @@
         <item name="colorPrimaryVariant">@color/dc_primary</item>
         <item name="colorOnPrimary">#FFFFFF</item>
         <item name="colorSecondary">@color/dc_icon_tile</item>
-        <item name="android:statusBarColor">#FFFFFF</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/brand_teal</item>
+        <item name="android:windowLightStatusBar">false</item>
         <item name="android:navigationBarColor">#FFFFFF</item>
         <item name="android:windowBackground">#FFFFFF</item>
+        <item name="android:fontFamily">@font/dm_sans</item>
     </style>
 </resources>
