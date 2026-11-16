@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bppp_blue_dark">#002855</color>
-    <color name="bppp_blue_primary">#003366</color>
-    <color name="bppp_blue_light">#00509D</color>
-    <color name="bppp_accent">#0284C7</color>
-    <color name="bppp_gold">#F59E0B</color>
+    <!-- Official ExamBPPP dc_ Theme Colors from ARSC -->
+    <color name="dc_primary">#426966</color>
+    <color name="dc_primary_disabled">#D3DFDD</color>
+    <color name="dc_on_primary_disabled">#8FA3A0</color>
+    <color name="dc_text_primary">#1F2323</color>
+    <color name="dc_text_secondary">#5F6B69</color>
+    <color name="dc_banner_loading_bg">#F3F6F6</color>
+    <color name="dc_banner_pass_bg">#EBF1F1</color>
+    <color name="dc_banner_fail_bg">#FDECEA</color>
+    <color name="dc_border">#DCE3E2</color>
+    <color name="dc_icon_tile">#E6F0EF</color>
+    <color name="dc_pill_pass_bg">#E5EFE8</color>
+    <color name="dc_pill_pass_text">#3E6B52</color>
+    <color name="dc_pill_fail_bg">#FDECEA</color>
+    <color name="dc_fail_text">#B3261E</color>
 
-    <color name="pass_green">#15803D</color>
-    <color name="pass_green_bg">#DCFCE7</color>
-    <color name="fail_red">#B91C1C</color>
-    <color name="fail_red_bg">#FEE2E2</color>
-    <color name="loading_amber">#B45309</color>
-    <color name="loading_amber_bg">#FEF3C7</color>
-
-    <color name="bg_light">#F8FAFC</color>
-    <color name="surface_white">#FFFFFF</color>
-    <color name="text_primary">#0F172A</color>
-    <color name="text_secondary">#64748B</color>
-    <color name="border_gray">#E2E8F0</color>
+    <color name="brand_teal">#82CECC</color>
+    <color name="background">#FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="text_hint">#8FA3A0</color>
 </resources>

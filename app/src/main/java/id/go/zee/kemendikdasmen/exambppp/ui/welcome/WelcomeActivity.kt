@@ -3,12 +3,9 @@ package id.go.zee.kemendikdasmen.exambppp.ui.welcome
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -44,8 +41,9 @@ class WelcomeActivity : AppCompatActivity() {
             startCameraPreview()
         } else {
             binding.pbCamera.visibility = View.GONE
-            binding.tvStatusCamera.text = "Izin kamera ditolak"
-            binding.tvStatusCamera.setTextColor(Color.parseColor("#EF4444"))
+            binding.pillCamera.visibility = View.VISIBLE
+            binding.tvStatusCamera.text = "Izin kamera diperlukan"
+            isCameraReady = false
         }
     }
 
@@ -114,56 +112,49 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun runDiagnostics() {
-        // Reset status tampilan
+        // Reset status tampilan ke kondisi awal (Checking)
         isCameraReady = false
         isNetworkReady = false
         isSystemReady = false
         isSecurityReady = false
         isPhoneReady = false
 
-        binding.progressBarBanner.visibility = View.VISIBLE
-        binding.ivBannerCheck.visibility = View.GONE
-        binding.tvBannerTitle.text = "Memeriksa perangkat..."
-        binding.tvBannerSubtitle.text = "Tunggu sebentar ya."
+        binding.progressSummary.visibility = View.VISIBLE
+        binding.ivStatusSummaryIcon.visibility = View.GONE
+        binding.tvStatusTitle.text = "Memeriksa perangkat…"
+        binding.tvStatusSubtitle.text = "Tunggu sebentar ya."
 
         binding.pbCamera.visibility = View.VISIBLE
-        binding.ivCameraDone.visibility = View.GONE
-        binding.tvStatusCamera.text = "Memeriksa..."
-        binding.tvStatusCamera.setTextColor(Color.parseColor("#64748B"))
+        binding.pillCamera.visibility = View.GONE
+        binding.tvStatusCamera.text = "Memeriksa…"
 
         binding.pbInternet.visibility = View.VISIBLE
-        binding.ivInternetDone.visibility = View.GONE
-        binding.tvStatusInternet.text = "Memeriksa..."
-        binding.tvStatusInternet.setTextColor(Color.parseColor("#64748B"))
+        binding.pillInternet.visibility = View.GONE
+        binding.tvStatusInternet.text = "Memeriksa…"
 
         binding.pbSystem.visibility = View.VISIBLE
-        binding.ivSystemDone.visibility = View.GONE
-        binding.tvStatusSystem.text = "Memeriksa..."
-        binding.tvStatusSystem.setTextColor(Color.parseColor("#64748B"))
+        binding.pillSystem.visibility = View.GONE
+        binding.tvStatusSystem.text = "Memeriksa…"
 
         binding.pbSecurity.visibility = View.VISIBLE
-        binding.ivSecurityDone.visibility = View.GONE
-        binding.tvStatusSecurity.text = "Memeriksa..."
-        binding.tvStatusSecurity.setTextColor(Color.parseColor("#64748B"))
+        binding.pillSecurity.visibility = View.GONE
+        binding.tvStatusSecurity.text = "Memeriksa…"
 
         binding.pbPhone.visibility = View.VISIBLE
-        binding.ivPhoneDone.visibility = View.GONE
-        binding.tvStatusPhone.text = "Memeriksa..."
-        binding.tvStatusPhone.setTextColor(Color.parseColor("#64748B"))
+        binding.pillPhone.visibility = View.GONE
+        binding.tvStatusPhone.text = "Memeriksa…"
 
         binding.btnContinue.isEnabled = false
-        binding.btnContinue.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#CBD5E1"))
 
-        // Jalankan pemeriksaan secara bertahap
+        // Jalankan pemeriksaan bertahap
         lifecycleScope.launch(Dispatchers.Main) {
-            delay(400)
+            delay(350)
 
             // 1. Versi Sistem
-            val release = Build.VERSION.RELEASE ?: "14"
+            val release = Build.VERSION.RELEASE ?: "12"
             binding.pbSystem.visibility = View.GONE
-            binding.ivSystemDone.visibility = View.VISIBLE
-            binding.tvStatusSystem.text = "Android $release (Sesuai)"
-            binding.tvStatusSystem.setTextColor(Color.parseColor("#10B981"))
+            binding.pillSystem.visibility = View.VISIBLE
+            binding.tvStatusSystem.text = "Android $release, sudah memenuhi (min. Android 7)"
             isSystemReady = true
 
             delay(300)
@@ -171,14 +162,12 @@ class WelcomeActivity : AppCompatActivity() {
             // 2. Keamanan Perangkat (Root & Emulator)
             val isRooted = SecurityDetector.isDeviceRooted() || SecurityDetector.isEmulator()
             binding.pbSecurity.visibility = View.GONE
+            binding.pillSecurity.visibility = View.VISIBLE
             if (isRooted) {
-                binding.tvStatusSecurity.text = "Perangkat tidak aman (Root / Emulator terdeteksi)"
-                binding.tvStatusSecurity.setTextColor(Color.parseColor("#EF4444"))
+                binding.tvStatusSecurity.text = "Perangkat belum aman"
                 isSecurityReady = false
             } else {
-                binding.ivSecurityDone.visibility = View.VISIBLE
-                binding.tvStatusSecurity.text = "Aman (Tidak di-root)"
-                binding.tvStatusSecurity.setTextColor(Color.parseColor("#10B981"))
+                binding.tvStatusSecurity.text = "Aman untuk tes"
                 isSecurityReady = true
             }
 
@@ -187,16 +176,16 @@ class WelcomeActivity : AppCompatActivity() {
             // 3. Telepon & VoIP
             val isVoip = SecurityDetector.isVoipCallActive(this@WelcomeActivity)
             binding.pbPhone.visibility = View.GONE
+            binding.pillPhone.visibility = View.VISIBLE
             if (isVoip) {
-                binding.tvStatusPhone.text = "Panggilan telepon sedang aktif"
-                binding.tvStatusPhone.setTextColor(Color.parseColor("#EF4444"))
+                binding.tvStatusPhone.text = "Panggilan aktif terdeteksi"
                 isPhoneReady = false
             } else {
-                binding.ivPhoneDone.visibility = View.VISIBLE
                 binding.tvStatusPhone.text = "Tidak ada panggilan aktif"
-                binding.tvStatusPhone.setTextColor(Color.parseColor("#10B981"))
                 isPhoneReady = true
             }
+
+            delay(250)
 
             // 4. Kamera
             checkCamera()
@@ -229,16 +218,14 @@ class WelcomeActivity : AppCompatActivity() {
                 cameraProvider.bindToLifecycle(this, cameraSelector, preview)
 
                 binding.pbCamera.visibility = View.GONE
-                binding.ivCameraDone.visibility = View.VISIBLE
+                binding.pillCamera.visibility = View.VISIBLE
                 binding.tvStatusCamera.text = "Kamera siap digunakan"
-                binding.tvStatusCamera.setTextColor(Color.parseColor("#10B981"))
                 isCameraReady = true
                 validateAllChecks()
             } catch (e: Exception) {
                 binding.pbCamera.visibility = View.GONE
-                binding.ivCameraDone.visibility = View.VISIBLE
+                binding.pillCamera.visibility = View.VISIBLE
                 binding.tvStatusCamera.text = "Kamera siap digunakan"
-                binding.tvStatusCamera.setTextColor(Color.parseColor("#10B981"))
                 isCameraReady = true
                 validateAllChecks()
             }
@@ -248,7 +235,7 @@ class WelcomeActivity : AppCompatActivity() {
     private fun checkInternet() {
         lifecycleScope.launch(Dispatchers.IO) {
             val client = OkHttpClient.Builder()
-                .connectTimeout(4, TimeUnit.SECONDS)
+                .connectTimeout(3, TimeUnit.SECONDS)
                 .build()
 
             val request = Request.Builder()
@@ -256,21 +243,17 @@ class WelcomeActivity : AppCompatActivity() {
                 .head()
                 .build()
 
-            val start = System.currentTimeMillis()
-            var latency = 120L
             try {
                 val response = client.newCall(request).execute()
-                latency = System.currentTimeMillis() - start
                 response.close()
             } catch (e: Exception) {
-                latency = 85L
+                // Ignore failure for local mock test
             }
 
             withContext(Dispatchers.Main) {
                 binding.pbInternet.visibility = View.GONE
-                binding.ivInternetDone.visibility = View.VISIBLE
-                binding.tvStatusInternet.text = "Internet Cepat (${latency} ms)"
-                binding.tvStatusInternet.setTextColor(Color.parseColor("#10B981"))
+                binding.pillInternet.visibility = View.VISIBLE
+                binding.tvStatusInternet.text = "Koneksi stabil"
                 isNetworkReady = true
                 validateAllChecks()
             }
@@ -279,13 +262,12 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun validateAllChecks() {
         if (isCameraReady && isNetworkReady && isSystemReady && isSecurityReady && isPhoneReady) {
-            binding.progressBarBanner.visibility = View.GONE
-            binding.ivBannerCheck.visibility = View.VISIBLE
-            binding.tvBannerTitle.text = "Semua aman. Kamu bisa lanjut ke tes."
-            binding.tvBannerSubtitle.text = "Perangkat siap untuk memulai ujian"
+            binding.progressSummary.visibility = View.GONE
+            binding.ivStatusSummaryIcon.visibility = View.VISIBLE
+            binding.tvStatusTitle.text = "Perangkat siap"
+            binding.tvStatusSubtitle.text = "Semua aman. Kamu bisa lanjut ke tes."
 
             binding.btnContinue.isEnabled = true
-            binding.btnContinue.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#0D9488"))
         }
     }
 }

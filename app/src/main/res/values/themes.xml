@@ -1,9 +1,9 @@
 <resources>
     <style name="Theme.AndroidExamBPPP.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">#0D9488</item>
-        <item name="colorPrimaryVariant">#0F766E</item>
+        <item name="colorPrimary">@color/dc_primary</item>
+        <item name="colorPrimaryVariant">@color/dc_primary</item>
         <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorSecondary">#2DD4BF</item>
+        <item name="colorSecondary">@color/dc_icon_tile</item>
         <item name="android:statusBarColor">#FFFFFF</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:navigationBarColor">#FFFFFF</item>
