@@ -20,4 +20,15 @@
     <color name="background">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="text_hint">#8FA3A0</color>
+
+    <!-- Legacy / WebView Colors -->
+    <color name="bppp_blue_dark">#002855</color>
+    <color name="bppp_blue_primary">#003366</color>
+    <color name="bppp_blue_light">#00509D</color>
+    <color name="bppp_accent">#0284C7</color>
+    <color name="bppp_gold">#F59E0B</color>
+    <color name="surface_white">#FFFFFF</color>
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="border_gray">#E2E8F0</color>
 </resources>
